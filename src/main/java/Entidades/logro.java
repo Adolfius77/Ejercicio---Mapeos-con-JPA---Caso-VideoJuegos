@@ -38,7 +38,10 @@ public class logro implements Serializable {
         this.id = id;
         this.nombre = nombre;
         this.puntos = puntos;
+        this.videojuego = videojuego;
     }
+
+   
 
     public Long getId() {
         return id;
@@ -63,5 +66,15 @@ public class logro implements Serializable {
     public void setPuntos(String puntos) {
         this.puntos = puntos;
     }
+
+    public videojuego getVideojuego() {
+        return videojuego;
+    }
+
+    public void setVideojuego(videojuego videojuego) {
+        this.videojuego = videojuego;
+    }
+
+    
 
 }
