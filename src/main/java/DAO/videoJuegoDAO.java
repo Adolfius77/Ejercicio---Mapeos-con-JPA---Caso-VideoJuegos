@@ -66,22 +66,8 @@ public class videoJuegoDAO implements IVideoJuegoDAO {
     }
 
     @Override
-    public void buscarPorId(EntityManager em, Long id) {
-        try {
-            em.getTransaction().begin();
-            videojuego v = em.find(videojuego.class, id);
-            if (v != null) {
-                em.remove(v);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
+    public videojuego buscarPorId(EntityManager em, Long id) {
+        return em.find(videojuego.class, id);
     }
 
     @Override
@@ -91,21 +77,24 @@ public class videoJuegoDAO implements IVideoJuegoDAO {
 
     @Override
     public List<videojuego> buscarPorNombre(EntityManager em, String nombre) {
-        return em.createQuery("SELECT v FROM videojuego v WHERE nombre = ?", videojuego.class).getResultList();
+        TypedQuery<videojuego> query = em.createQuery("SELECT v FROM videojuego v WHERE v.nombre LIKE :nombre", videojuego.class);
+        query.setParameter("nombre", "%" + nombre + "%");
+        return query.getResultList();
     }
 
     @Override
-    public List<videojuego> buscarPorDesarrolladora(EntityManager em,String desarrolladora) {
-        return em.createQuery("SELECT v FROM videojuego v WHERE desarrolladora = ?", videojuego.class).getResultList();
-
+    public List<videojuego> buscarPorDesarrolladora(EntityManager em, String desarrolladora) {
+        TypedQuery<videojuego> query = em.createQuery("SELECT v FROM videojuego v WHERE v.desarrolladora = :desarrolladora", videojuego.class);
+        query.setParameter("desarolladora", desarrolladora);
+        return query.getResultList();
     }
 
     @Override
-    public List<videojuego> filtrarPorPuntajeMayorA(EntityManager em,int puntajeMinimo) {
+    public List<videojuego> filtrarPorPuntajeMayorA(EntityManager em, int puntajeMinimo) {
         try {
             TypedQuery<videojuego> query = em.createQuery(
-            "SELECT v FROM videojuego v WHERE v.puntuaje >= :minimo", videojuego.class);
-            query.setParameter("minimo",puntajeMinimo);
+                    "SELECT v FROM videojuego v WHERE v.puntuaje >= :minimo", videojuego.class);
+            query.setParameter("minimo", puntajeMinimo);
             query.setMaxResults(15);
             return query.getResultList();
         } catch (PersistenceException ex) {
@@ -115,31 +104,53 @@ public class videoJuegoDAO implements IVideoJuegoDAO {
     }
 
     @Override
-    public List<videojuego> ordenarPorNombre() {
+    public List<videojuego> ordenarPorNombre(EntityManager em) {
+        return em.createQuery("SELECT v FROM videojuego v ORDER BY v.nombre ASC").getResultList();
     }
 
     @Override
-    public List<videojuego> ordenarPorPuntajeDesc() {
+    public List<videojuego> ordenarPorPuntajeDesc(EntityManager em) {
+        return em.createQuery("SELECT v FROM videojuego v ORDER BY v.puntuaje DESC").getResultList();
     }
 
     @Override
-    public List<Object[]> contarVideojuegosPorDesarrolladora() {
+    public List<Object[]> contarVideojuegosPorDesarrolladora(EntityManager em) {
+        return em.createQuery("SELECT v.desarrolladora, COUNT(v) FROM videojuego v GROUP BY v.desarrolladora", Object[].class).getResultList();
+
     }
 
     @Override
-    public List<videojuego> buscarSinJugadores() {
+    public List<videojuego> buscarSinJugadores(EntityManager em) {
+        return em.createQuery("SELECT v FROM videojuego v WHERE v.jugadores IS EMPTY", videojuego.class).getResultList();
+
     }
 
     @Override
-    public List<videojuego> buscarConLogrosMayorA(int puntosMinimos) {
+    public List<videojuego> buscarConLogrosMayorA(EntityManager em, int puntosMinimos) {
+        TypedQuery<videojuego> query = em.createQuery("SELECT DISTINCT v FROM videojuego v JOIN v.logros l WHERE l.puntos > :puntos", videojuego.class);
+        query.setParameter("puntos", puntosMinimos);
+        return query.getResultList();
     }
 
     @Override
-    public int actualizarPuntajePorNombre(String nombre, int nuevoPuntaje) {
+    public int actualizarPuntajePorNombre(EntityManager em, String nombre, int nuevoPuntaje) {
+        em.getTransaction().begin();
+        int updatedCount = em.createQuery("UPDATE videojuego v SET v.puntuaje = :puntaje WHERE v.nombre = :nombre")
+                .setParameter("puntaje", nuevoPuntaje)
+                .setParameter("nombre", nombre)
+                .executeUpdate();
+        em.getTransaction().commit();
+        return updatedCount;
     }
 
     @Override
-    public int eliminarPorNombre(String nombre) {
+    public int eliminarPorNombre(EntityManager em, String nombre) {
+        em.getTransaction().begin();
+        int deletedCount = em.createQuery("DELETE FROM videojuego v WHERE v.nombre =:nombre")
+                .setParameter("nombre", nombre)
+                .executeUpdate();
+        em.getTransaction().commit();
+        return deletedCount;
     }
 
 }

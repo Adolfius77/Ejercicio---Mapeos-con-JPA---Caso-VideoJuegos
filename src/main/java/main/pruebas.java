@@ -11,10 +11,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- *
- * @author adoil
- */
 public class pruebas {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("videojuegoPU");
@@ -35,10 +31,10 @@ public class pruebas {
             videojuego juego1 = new videojuego();
             juego1.setNombre("The Legend of Zelda: Tears of the Kingdom");
             juego1.setDesarrolladora("Nintendo");
-            juego1.setPuntuaje("9.8");
+            juego1.setPuntuaje(10); 
 
-            logro logro1 = new logro(null, "Maestro de la Espada", "50");
-            logro logro2 = new logro(null, "Explorador de Hyrule", "100");
+            logro logro1 = new logro(null, "Maestro de la Espada", 50); 
+            logro logro2 = new logro(null, "Explorador de Hyrule", 100); 
 
             logro1.setVideojuego(juego1);
             logro2.setVideojuego(juego1);
@@ -56,27 +52,25 @@ public class pruebas {
 
             jugador1.setVideojuegos(videojuegosDelJugador);
             juego1.setJugadores(jugadoresDelVideojuego);
-
-            System.out.println("Guardando jugador en la base de datos...");
-            em.persist(jugador1);
+            
             System.out.println("Guardando videojuego en la base de datos...");
             em.persist(juego1);
 
             em.getTransaction().commit();
-            System.out.println("¡Datos guardados con exito!");
+            System.out.println("¡Datos guardados con éxito!");
 
             System.out.println("\n--- Verificando datos guardados ---");
-            jugador jugadorRecuperado = em.find(jugador.class, jugador1.getId());
-            if (jugadorRecuperado != null) {
-                System.out.println("Jugador recuperado: " + jugadorRecuperado.getPsudonimo());
-                System.out.println("Direccion: " + jugadorRecuperado.getDirecion().getCalle());
-                videojuego primerJuego = jugadorRecuperado.getVideojuegos().iterator().next();
-                System.out.println("Juega a: " + primerJuego.getNombre());
-                System.out.println("Logros del juego: " + primerJuego.getLogros().size());
+            
+            videojuego juegoRecuperado = em.find(videojuego.class, juego1.getId());
+            if (juegoRecuperado != null) {
+                System.out.println("Juego recuperado: " + juegoRecuperado.getNombre());
+                jugador primerJugador = juegoRecuperado.getJugadores().iterator().next();
+                System.out.println("Jugador: " + primerJugador.getPsudonimo());
+                System.out.println("Direccion: " + primerJugador.getDirecion().getCalle());
+                System.out.println("Logros del juego: " + juegoRecuperado.getLogros().size());
             }
 
         } catch (Exception e) {
-
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }

@@ -25,7 +25,7 @@ public class logro implements Serializable {
     private Long id;
 
     private String nombre;
-    private String puntos;
+    private int puntos;
 
     @ManyToOne
     @JoinColumn(name = "videojuego_id")
@@ -34,14 +34,12 @@ public class logro implements Serializable {
     public logro() {
     }
 
-    public logro(Long id, String nombre, String puntos) {
+    public logro(Long id, String nombre, int puntos) {
         this.id = id;
         this.nombre = nombre;
         this.puntos = puntos;
         this.videojuego = videojuego;
     }
-
-   
 
     public Long getId() {
         return id;
@@ -59,11 +57,11 @@ public class logro implements Serializable {
         this.nombre = nombre;
     }
 
-    public String getPuntos() {
+    public int getPuntos() {
         return puntos;
     }
 
-    public void setPuntos(String puntos) {
+    public void setPuntos(int puntos) {
         this.puntos = puntos;
     }
 

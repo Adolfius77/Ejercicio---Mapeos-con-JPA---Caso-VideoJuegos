@@ -17,7 +17,7 @@ public interface IVideoJuegoDAO {
     void agregar(EntityManager em, videojuego videojuego);
     void editar(EntityManager em,videojuego videojuego);
     void eliminar(EntityManager em,Long id);
-    videojuego buscarPorId(Long id);
+    videojuego buscarPorId(EntityManager em,Long id);
 
 
 

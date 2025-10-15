@@ -29,26 +29,24 @@ public class videojuego implements Serializable {
     private Long id;
 
     private String nombre;
-    private String puntuaje;
+    private int puntuaje;
     private String desarrolladora;
-    
+
     @OneToMany(mappedBy = "videojuego", cascade = CascadeType.ALL)
     private Set<logro> logros;
-    
+
     @ManyToMany
     @JoinTable(
             name = "videojuego_jugador",
             joinColumns = @JoinColumn(name = "videojuego_id"),
             inverseJoinColumns = @JoinColumn(name = "jugador_id")
-            
-
     )
     private Set<jugador> jugadores;
-    
+
     public videojuego() {
     }
 
-    public videojuego(Long id, String nombre, String puntuaje, String desarrolladora, Set<logro> logros, Set<jugador> jugadores) {
+    public videojuego(Long id, String nombre, int puntuaje, String desarrolladora, Set<logro> logros, Set<jugador> jugadores) {
         this.id = id;
         this.nombre = nombre;
         this.puntuaje = puntuaje;
@@ -73,11 +71,11 @@ public class videojuego implements Serializable {
         this.nombre = nombre;
     }
 
-    public String getPuntuaje() {
+    public int getPuntuaje() {
         return puntuaje;
     }
 
-    public void setPuntuaje(String puntuaje) {
+    public void setPuntuaje(int puntuaje) {
         this.puntuaje = puntuaje;
     }
 
@@ -105,6 +103,4 @@ public class videojuego implements Serializable {
         this.jugadores = jugadores;
     }
 
-    
-    
 }
