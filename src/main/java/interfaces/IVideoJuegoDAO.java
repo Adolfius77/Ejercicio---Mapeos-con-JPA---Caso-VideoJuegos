@@ -23,16 +23,16 @@ public interface IVideoJuegoDAO {
 
     // Consultas NamedQuery
     List<videojuego> obtenerTodos(EntityManager em);
-    List<videojuego> buscarPorNombre(String nombre);
-    List<videojuego> buscarPorDesarrolladora(String desarrolladora);
-    List<videojuego> filtrarPorPuntajeMayorA(int puntajeMinimo);
-    List<videojuego> ordenarPorNombre();
-    List<videojuego> ordenarPorPuntajeDesc();
-    List<Object[]> contarVideojuegosPorDesarrolladora();
-    List<videojuego> buscarSinJugadores();
-    List<videojuego> buscarConLogrosMayorA(int puntosMinimos);
-    int actualizarPuntajePorNombre(String nombre, int nuevoPuntaje);
-    int eliminarPorNombre(String nombre);
+    List<videojuego> buscarPorNombre(EntityManager em,String nombre);
+    List<videojuego> buscarPorDesarrolladora(EntityManager em,String desarrolladora);
+    List<videojuego> filtrarPorPuntajeMayorA(EntityManager em,int puntajeMinimo);
+    List<videojuego> ordenarPorNombre(EntityManager em);
+    List<videojuego> ordenarPorPuntajeDesc(EntityManager em);
+    List<Object[]> contarVideojuegosPorDesarrolladora(EntityManager em);
+    List<videojuego> buscarSinJugadores(EntityManager em);
+    List<videojuego> buscarConLogrosMayorA(EntityManager em,int puntosMinimos);
+    int actualizarPuntajePorNombre(EntityManager em,String nombre, int nuevoPuntaje);
+    int eliminarPorNombre(EntityManager em,String nombre);
 
     
     

@@ -7,16 +7,18 @@ package DAO;
 import Entidades.videojuego;
 import interfaces.IVideoJuegoDAO;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**
  *
  * @author adoil
  */
-public class videoJuegoDAO implements IVideoJuegoDAO{
+public class videoJuegoDAO implements IVideoJuegoDAO {
 
     @Override
-    public void agregar(EntityManager em,videojuego videojuego) {
+    public void agregar(EntityManager em, videojuego videojuego) {
         try {
             em.getTransaction().begin();
             em.persist(videojuego);
@@ -26,13 +28,13 @@ public class videoJuegoDAO implements IVideoJuegoDAO{
                 em.getTransaction().rollback();
             }
             throw e;
-        }finally{
+        } finally {
             em.close();
         }
     }
 
     @Override
-    public void editar(EntityManager em,videojuego videojuego) {
+    public void editar(EntityManager em, videojuego videojuego) {
         try {
             em.getTransaction().begin();
             em.merge(videojuego);
@@ -42,13 +44,13 @@ public class videoJuegoDAO implements IVideoJuegoDAO{
                 em.getTransaction().rollback();
             }
             throw ex;
-        }finally{
+        } finally {
             em.close();
         }
     }
 
     @Override
-    public void eliminar(EntityManager em,Long id) {
+    public void eliminar(EntityManager em, Long id) {
         try {
             em.getTransaction().begin();
             em.remove(id);
@@ -58,13 +60,13 @@ public class videoJuegoDAO implements IVideoJuegoDAO{
                 em.getTransaction().rollback();
             }
             throw e;
-        }finally{
+        } finally {
             em.close();
         }
     }
 
     @Override
-    public void buscarPorId(EntityManager em,Long id) {
+    public void buscarPorId(EntityManager em, Long id) {
         try {
             em.getTransaction().begin();
             videojuego v = em.find(videojuego.class, id);
@@ -77,26 +79,39 @@ public class videoJuegoDAO implements IVideoJuegoDAO{
                 em.getTransaction().rollback();
             }
             throw e;
-        }finally{
+        } finally {
             em.close();
         }
     }
 
     @Override
     public List<videojuego> obtenerTodos(EntityManager em) {
-        
+        return em.createQuery("SELECT v FROM videojuego v", videojuego.class).getResultList();
     }
 
     @Override
-    public List<videojuego> buscarPorNombre(String nombre) {
+    public List<videojuego> buscarPorNombre(EntityManager em, String nombre) {
+        return em.createQuery("SELECT v FROM videojuego v WHERE nombre = ?", videojuego.class).getResultList();
     }
 
     @Override
-    public List<videojuego> buscarPorDesarrolladora(String desarrolladora) {
+    public List<videojuego> buscarPorDesarrolladora(EntityManager em,String desarrolladora) {
+        return em.createQuery("SELECT v FROM videojuego v WHERE desarrolladora = ?", videojuego.class).getResultList();
+
     }
 
     @Override
-    public List<videojuego> filtrarPorPuntajeMayorA(int puntajeMinimo) {
+    public List<videojuego> filtrarPorPuntajeMayorA(EntityManager em,int puntajeMinimo) {
+        try {
+            TypedQuery<videojuego> query = em.createQuery(
+            "SELECT v FROM videojuego v WHERE v.puntuaje >= :minimo", videojuego.class);
+            query.setParameter("minimo",puntajeMinimo);
+            query.setMaxResults(15);
+            return query.getResultList();
+        } catch (PersistenceException ex) {
+            System.err.println("error al filtrar videjuegos: " + ex.getMessage());
+            return List.of();
+        }
     }
 
     @Override
@@ -126,5 +141,5 @@ public class videoJuegoDAO implements IVideoJuegoDAO{
     @Override
     public int eliminarPorNombre(String nombre) {
     }
-    
+
 }
